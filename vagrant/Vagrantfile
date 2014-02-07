@@ -15,14 +15,14 @@ Vagrant.configure("2") do |config|
     # Install NodeJS?
     :nodejs => {
       :install => true,
-      :gruntjs => true
+      :gruntjs => false
     },
     # Web settings
     :web => {
       # Port to forward from vagrant -> your machine (eg: http://localhost:8080)
-      :http_port => {:from => 80, :to => 8080},
+      :http_port => {:from => 3000, :to => 3000},
       # Install a server? options: 'nginx', 'apache', or false for none (ie. false to use Rails internal server)
-      :server => 'nginx',
+      :server => false,
       # Only applicable if :server = 'nginx|apache'
       :doc_root => '/home/vagrant/app'
     },
@@ -36,15 +36,15 @@ Vagrant.configure("2") do |config|
     # PostgreSQL settings
     :postgres => {
       # Install PostgreSQL?
-      :install => true,
+      :install => false,
       # Password for login
       :password => "vagrant",
       # Port to forward on your local system (GUI client)
       :port => {:from => 5432, :to => 5432},
       # Install hstore extensions?
-      :hstore => true,
+      :hstore => false,
       # Install GIS extensions?
-      :gis => true
+      :gis => false
     }
   }
 
@@ -94,6 +94,7 @@ Vagrant.configure("2") do |config|
     chef.add_recipe 'git'
     chef.add_recipe 'ruby_build'
     chef.add_recipe 'rbenv::user'
+    chef.add_recipe 'build-essential'
 
     # Default attributes
     _attributes = {
