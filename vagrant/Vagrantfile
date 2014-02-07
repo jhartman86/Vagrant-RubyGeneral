@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
       # Port to forward from vagrant -> your machine (eg: http://localhost:8080)
       :http_port => {:from => 80, :to => 8080},
       # Install a server? options: 'nginx', 'apache', or false for none (ie. false to use Rails internal server)
-      :server => false,
+      :server => 'nginx',
       # Only applicable if :server = 'nginx|apache'
       :doc_root => '/home/vagrant/app'
     },
@@ -36,15 +36,15 @@ Vagrant.configure("2") do |config|
     # PostgreSQL settings
     :postgres => {
       # Install PostgreSQL?
-      :install => false,
+      :install => true,
       # Password for login
       :password => "vagrant",
       # Port to forward on your local system (GUI client)
       :port => {:from => 5432, :to => 5432},
       # Install hstore extensions?
-      :hstore => false,
+      :hstore => true,
       # Install GIS extensions?
-      :gis => false
+      :gis => true
     }
   }
 
@@ -101,7 +101,7 @@ Vagrant.configure("2") do |config|
       :box_setup => box_settings,
       # Git
       :git => {
-          :prefix => '/usr/local'
+        :prefix => '/usr/local'
       },
       # Rbenv shit pulled from box_settings
       :rbenv => {
@@ -192,10 +192,17 @@ Vagrant.configure("2") do |config|
     # Install PostgreSQL?
     if box_settings[:postgres][:install]
       chef.add_recipe 'postgresql'
-      # Include GIS extensions?
+      chef.add_recipe 'postgresql::client'
+      chef.add_recipe 'postgresql::server'
+      # Include hstore extension?
+      if box_settings[:postgres][:gis]
+        chef.add_recipe 'postgresql::contrib'
+      end
+      # Include GIS extension?
       if box_settings[:postgres][:gis]
         chef.add_recipe 'postgresql::postgis'
       end
+      chef.add_recipe 'box_setup::postgres'
 
       _attributes[:postgresql] = {
         :port => box_settings[:postgres][:port][:from],
