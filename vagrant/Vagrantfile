@@ -14,8 +14,10 @@ Vagrant.configure("2") do |config|
     :redis => true,
     # Install NodeJS?
     :nodejs => {
-      :install => true,
-      :gruntjs => false
+      :install                  => true,
+      :gruntjs                  => true,
+      :bower                    => true,
+      :autoinstall_npm_packages => true
     },
     # Web settings
     :web => {
@@ -45,7 +47,12 @@ Vagrant.configure("2") do |config|
       :hstore => false,
       # Install GIS extensions?
       :gis => false
-    }
+    },
+    # Extra ports to forward (ie. for livereload)
+    :port_forwards => [
+      {:from => 35729, :to => 35729}
+      # etc, etc as pairs
+    ]
   }
 
 
@@ -60,6 +67,12 @@ Vagrant.configure("2") do |config|
   # PostgreSQL (if applicable)
   if (box_settings[:postgres][:install])
     config.vm.network :forwarded_port, guest: box_settings[:postgres][:port][:from], host: box_settings[:postgres][:port][:to], auto_correct: true
+  end
+  # Setup any misc port forwards
+  if (! box_settings[:port_forwards].empty? )
+    box_settings[:port_forwards].each do |pairs|
+      config.vm.network :forwarded_port, guest: pairs[:from], host: pairs[:to], auto_correct: true
+    end
   end
   # Mount shared folder
   config.vm.synced_folder "../", "/home/vagrant/app"
@@ -121,7 +134,7 @@ Vagrant.configure("2") do |config|
     if box_settings[:nodejs][:install]
       chef.add_recipe 'nodejs'
       chef.add_recipe 'nodejs::npm'
-      chef.add_recipe 'box_setup::gruntjs'
+      chef.add_recipe 'box_setup::npm'
     end
 
     # Include Redis?
