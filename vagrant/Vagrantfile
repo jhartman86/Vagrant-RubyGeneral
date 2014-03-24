@@ -135,6 +135,10 @@ Vagrant.configure("2") do |config|
       chef.add_recipe 'nodejs'
       chef.add_recipe 'nodejs::npm'
       chef.add_recipe 'box_setup::npm'
+
+      _attributes[:nodejs] = {
+          :npm => '1.4.4'
+      }
     end
 
     # Include Redis?
