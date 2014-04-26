@@ -11,13 +11,16 @@ Vagrant.configure("2") do |config|
     # Memory available for the virtual machine
     :memory_cap => '384',
     # Install Redis?
-    :redis => true,
+    :redis => false,
     # Install NodeJS?
     :nodejs => {
-      :install                  => true,
-      :gruntjs                  => true,
-      :bower                    => true,
-      :autoinstall_npm_packages => true
+      :install  => true,
+      :gruntjs  => true,
+      :bower    => true,
+      :npm      => {
+        :auto_install_packages => true,
+        :package_json_location => '/home/vagrant/app'
+      }
     },
     # Web settings
     :web => {
@@ -84,7 +87,7 @@ Vagrant.configure("2") do |config|
       v.name = File.basename(File.expand_path("../"))
     end
   rescue
-    $stdout.puts "Unable to rename Concrete5 VM; VirtualBox will display a generic name..."
+    $stdout.puts "Unable to rename Vagrant machine; VirtualBox will display a generic name..."
   end
   # Resource usage caps for VM
   begin

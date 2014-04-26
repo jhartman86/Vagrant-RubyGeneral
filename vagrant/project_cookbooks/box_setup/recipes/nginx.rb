@@ -9,5 +9,4 @@ if node[:box_setup][:web][:server] == 'nginx'
 
   # Enable
   nginx_site "#{node[:box_setup][:project_name]}"
-
 end
