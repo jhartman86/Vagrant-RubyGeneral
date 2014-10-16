@@ -15,10 +15,11 @@ Vagrant.configure("2") do |config|
     # Install NodeJS?
     :nodejs => {
       :install  => true,
-      :gruntjs  => true,
-      :bower    => true,
+      :gruntjs  => false,
+      :gulpjs   => false,
+      :bower    => false,
       :npm      => {
-        :auto_install_packages => true,
+        :auto_install_packages => false,
         :package_json_location => '/home/vagrant/app'
       }
     },
@@ -135,12 +136,12 @@ Vagrant.configure("2") do |config|
 
     # Include NodeJS?
     if box_settings[:nodejs][:install]
-      chef.add_recipe 'nodejs'
+      chef.add_recipe 'nodejs::install_from_source'
       chef.add_recipe 'nodejs::npm'
       chef.add_recipe 'box_setup::npm'
 
       _attributes[:nodejs] = {
-          :npm => '1.4.4'
+          :npm => '2.1.0'
       }
     end
 
